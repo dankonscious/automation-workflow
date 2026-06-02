@@ -37,14 +37,14 @@ jobs:
       - name: Run QA checks
         id: qa
         run: |
-          # Get files changed in the most recent commit (after deploy jobs may have committed)
-          CHANGED=$(git diff-tree --no-commit-id -r --name-only --diff-filter=AM HEAD)
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
 
-          if [ -z "$CHANGED" ]; then
-            echo "No changed files detected — skipping QA"
-            echo "qa_passed=true"        >> "$GITHUB_OUTPUT"
-            echo "failure_message="      >> "$GITHUB_OUTPUT"
-            exit 0
+          # Determine which folders were affected by the original push
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(git ls-tree -r --name-only "$AFTER")
+          else
+            CHANGED=$(git diff --name-only --diff-filter=AM "$BEFORE" "$AFTER")
           fi
 
           echo "Files to validate:"
