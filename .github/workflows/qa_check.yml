@@ -67,6 +67,7 @@ jobs:
           # Check 1: Every image file must be smaller than 1MB
           # ------------------------------------------------------------------
           CHECK1_FAILED=false
+          CHECK1_FILES=""
           while IFS= read -r file; do
             [ -z "$file" ] && continue
             ext="${file##*.}"
@@ -82,15 +83,17 @@ jobs:
               if [ "$size" -ge 1048576 ]; then
                 CHECK1_FAILED=true
                 QA_PASSED=false
+                CHECK1_FILES="${CHECK1_FILES}$(basename "$file"), "
               fi
             fi
           done <<< "$CHANGED"
-          [ "$CHECK1_FAILED" = true ] && FAILURES="${FAILURES}Check 1: Image size exceeded 1MB\n"
+          [ "$CHECK1_FAILED" = true ] && FAILURES="${FAILURES}Check 1: Image size exceeded 1MB — ${CHECK1_FILES%, }\n"
 
           # ------------------------------------------------------------------
           # Check 2: Every web file must have a recognized extension
           # ------------------------------------------------------------------
           CHECK2_FAILED=false
+          CHECK2_FILES=""
           while IFS= read -r file; do
             [ -z "$file" ] && continue
             base=$(basename "$file")
@@ -108,9 +111,10 @@ jobs:
             if [ "$is_valid" = false ]; then
               CHECK2_FAILED=true
               QA_PASSED=false
+              CHECK2_FILES="${CHECK2_FILES}${base}, "
             fi
           done <<< "$CHANGED"
-          [ "$CHECK2_FAILED" = true ] && FAILURES="${FAILURES}Check 2: Unrecognized file extension\n"
+          [ "$CHECK2_FAILED" = true ] && FAILURES="${FAILURES}Check 2: Unrecognized file extension — ${CHECK2_FILES%, }\n"
 
           # ------------------------------------------------------------------
           # Check 3: No duplicate filenames anywhere in the repo
@@ -122,7 +126,8 @@ jobs:
             | sort | uniq -d)
 
           if [ -n "$DUPES" ]; then
-            FAILURES="${FAILURES}Check 3: Duplicate filenames found\n"
+            CHECK3_FILES=$(echo "$DUPES" | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+            FAILURES="${FAILURES}Check 3: Duplicate filenames found — ${CHECK3_FILES}\n"
             QA_PASSED=false
           fi
 
