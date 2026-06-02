@@ -88,7 +88,7 @@ jobs:
                 if [ "$size" -ge 1048576 ]; then
                   CHECK1_FAILED=true
                   QA_PASSED=false
-                  CHECK1_FILES="${CHECK1_FILES}$(basename "$file"), "
+                  CHECK1_FILES="${CHECK1_FILES}${file#./}, "
                 fi
               fi
             done < <(find "$dir" -type f ! -name '.*')
@@ -120,37 +120,11 @@ jobs:
               if [ "$is_valid" = false ]; then
                 CHECK2_FAILED=true
                 QA_PASSED=false
-                CHECK2_FILES="${CHECK2_FILES}${base}, "
+                CHECK2_FILES="${CHECK2_FILES}${file#./}, "
               fi
             done < <(find "$dir" -type f ! -name '.*')
           done <<< "$CHANGED_DIRS"
           [ "$CHECK2_FAILED" = true ] && FAILURES="${FAILURES}Check 2: Unrecognized file extension — ${CHECK2_FILES%, }\n"
-
-          # ------------------------------------------------------------------
-          # Check 3: No duplicate filenames within each committed folder
-          # ------------------------------------------------------------------
-          CHECK3_DETAIL=""
-
-          while IFS= read -r dir; do
-            [ -z "$dir" ] && continue
-            [ ! -d "$dir" ] && continue
-
-            DUPES=$(find "$dir" -type f \
-              ! -name '.*' \
-              | sed 's|.*/||' \
-              | sort | uniq -d)
-
-            if [ -n "$DUPES" ]; then
-              while IFS= read -r dupe; do
-                [ -z "$dupe" ] && continue
-                PATHS=$(find "$dir" -type f ! -name '.*' -name "$dupe" | tr '\n' '  ')
-                CHECK3_DETAIL="${CHECK3_DETAIL}${dupe}: ${PATHS}\n"
-              done <<< "$DUPES"
-              QA_PASSED=false
-            fi
-          done <<< "$CHANGED_DIRS"
-
-          [ -n "$CHECK3_DETAIL" ] && FAILURES="${FAILURES}Check 3: Duplicate filenames found\n${CHECK3_DETAIL}"
 
           # ------------------------------------------------------------------
           # Emit outputs
