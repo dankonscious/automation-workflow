@@ -47,7 +47,7 @@ jobs:
 
           RESPONSE=$(curl -s \
             -X POST "https://slack.com/api/chat.postMessage" \
-            -H "Authorization: Bearer xoxb-737253511315-9790794206257-uRvh89IRnW1uvtKRkWOefCtH" \
+            -H "Authorization: Bearer xoxb-737253511315-9790794206257-SSQ1nxsxYpsTI6UwlJxSJdUJ" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD")
 
