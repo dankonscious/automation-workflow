@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Send Slack notification
         env:
-          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           MESSAGE: ${{ inputs.message }}
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
