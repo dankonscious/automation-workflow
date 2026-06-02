@@ -24,13 +24,13 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           PAYLOAD=$(jq -n \
-            --arg channel "C0B7ACQ4X6K" \
+            --arg channel "#automation-workflows" \
             --arg repo "$REPO" \
             --arg branch "$BRANCH" \
             --arg sha "${SHA:0:7}" \
             --arg msg "$MESSAGE" \
             '{
-              "channel": C0B7ACQ4X6K,
+              "channel": #automation-workflows,
               "attachments": [
                 {
                   "color": "danger",
