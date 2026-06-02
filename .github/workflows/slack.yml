@@ -23,7 +23,7 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           SHA: ${{ github.sha }}
         run: |
-          SECRET="xoxb-737253511315-11258253388291-gcnKT2UsDIOp6OIWqcDbSGIG"
+          SECRET="xoxb-737253511315-11258253388291-L6INWPFGORen9QiTmxafAdkR"
           PAYLOAD=$(jq -n \
             --arg channel "#automation-workflows" \
             --arg repo "$REPO" \
