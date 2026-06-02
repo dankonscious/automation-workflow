@@ -50,6 +50,7 @@
             fi
 
     convert-images:
+      name: Initialize Image Conversion and Upload
       needs: check-changes
       if: needs.check-changes.outputs.has_images == 'true'
       runs-on: ubuntu-latest
