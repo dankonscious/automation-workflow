@@ -23,8 +23,6 @@ jobs:
     steps:
       - name: Send Slack notification
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           MESSAGE: ${{ inputs.message }}
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
