@@ -80,7 +80,7 @@ jobs:
             '{
                 channel: $channel,
                 text:
-                  ("❌ *QA Check Failed — Deploy Blocked*\n\n" +
+                  ("*QA Check Failed*\n\n" +
                   "*Repository:* <" + $repo_url + "|" + $repo + ">\n" +
                   "*Branch:* " + $branch + "\n" +
                   "*Commit:* <" + $commit_url + "|" + $sha + ">\n" +
