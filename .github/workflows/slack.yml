@@ -30,7 +30,7 @@ jobs:
             --arg sha "${SHA:0:7}" \
             --arg msg "$MESSAGE" \
             '{
-              "channel": #automation-workflows,
+              "channel": $channel,
               "attachments": [
                 {
                   "color": "danger",
