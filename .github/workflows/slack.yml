@@ -10,11 +10,6 @@ on:
         description: "Failure details to include in the notification"
         required: true
         type: string
-    secrets:
-      SLACK_BOT_TOKEN:
-        required: true
-      SLACK_CHANNEL_ID:
-        required: true
 
 jobs:
   notify:
