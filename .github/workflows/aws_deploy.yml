@@ -41,21 +41,6 @@
           run: |
             missing=false
         
-            if [ -z "${{ secrets.FTP_SERVER }}" ]; then
-              echo "❌ FTP_SERVER secret is missing!"
-              missing=true
-            fi
-        
-            if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
-              echo "❌ FTP_USERNAME secret is missing!"
-              missing=true
-            fi
-        
-            if [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
-              echo "❌ FTP_PASSWORD secret is missing!"
-              missing=true
-            fi
-        
             if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
               echo "❌ AWS_ACCESS_KEY_ID secret is missing!"
               missing=true

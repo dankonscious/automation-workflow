@@ -47,16 +47,6 @@
               missing=true
             fi
         
-            if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
-              echo "❌ AWS_ACCESS_KEY_ID secret is missing!"
-              missing=true
-            fi
-        
-            if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then
-              echo "❌ AWS_SECRET_ACCESS_KEY secret is missing!"
-              missing=true
-            fi
-        
             if [ "$missing" = true ]; then
               echo "One or more required secrets are missing. Exiting..."
               exit 1
