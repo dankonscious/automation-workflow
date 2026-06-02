@@ -32,19 +32,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: Run QA checks
         id: qa
         run: |
-          BEFORE="${{ github.event.before }}"
-          AFTER="${{ github.sha }}"
-
-          # On the very first push, before is the zero SHA — list all tracked files
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            CHANGED=$(git ls-tree -r --name-only HEAD)
-          else
-            CHANGED=$(git diff --name-only --diff-filter=AM "$BEFORE" "$AFTER")
-          fi
+          # Get files changed in the most recent commit (after deploy jobs may have committed)
+          CHANGED=$(git diff-tree --no-commit-id -r --name-only --diff-filter=AM HEAD)
 
           if [ -z "$CHANGED" ]; then
             echo "No changed files detected — skipping QA"
