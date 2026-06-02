@@ -58,10 +58,27 @@
               echo "✅ All required secrets are present."
             fi
   
+        # ---------------------------------------------------------
+        # Check for image changes — end workflow early if none
+        # ---------------------------------------------------------
+        - name: Check for image changes
+          id: check_images
+          run: |
+            CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '\.(png|jpg|jpeg|webp)$' || true)
+            if [ -z "$CHANGED" ]; then
+              echo "No image changes detected in this push. Ending workflow."
+              echo "has_images=false" >> $GITHUB_OUTPUT
+            else
+              echo "✅ Image changes detected:"
+              echo "$CHANGED"
+              echo "has_images=true" >> $GITHUB_OUTPUT
+            fi
+
         # ---------------------------
         # Detect changed images
         # ---------------------------
         - name: Detect changed images
+          if: steps.check_images.outputs.has_images == 'true'
           id: detect
           run: |
             echo "🔍 Checking for changed images..."
@@ -187,6 +204,7 @@
         # ---------------------------
   
         - name: Set up AWS credentials
+          if: steps.check_images.outputs.has_images == 'true'
           uses: aws-actions/configure-aws-credentials@v3
           with:
             aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -194,12 +212,14 @@
             aws-region: us-east-1
   
         - name: Verify AWS credentials and bucket access
+          if: steps.check_images.outputs.has_images == 'true'
           run: |
             aws sts get-caller-identity
             aws s3 ls s3://cdn-konscious || echo "Bucket not found or no access"
             aws s3api head-bucket --bucket cdn-konscious || echo "Cannot access bucket"
   
         - name: Configure S3 bucket for public access
+          if: steps.check_images.outputs.has_images == 'true'
           run: |
             aws s3api put-public-access-block \
               --bucket cdn-konscious \
@@ -207,6 +227,7 @@
               "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false" || echo "Failed to update public access block"
   
         - name: Configure S3 CORS
+          if: steps.check_images.outputs.has_images == 'true'
           run: |
             aws s3api put-bucket-cors --bucket cdn-konscious --cors-configuration '[
               {
@@ -241,6 +262,7 @@
             echo "webp_files=$(echo $WEBP_FILES | tr '\n' ' ')" >> $GITHUB_OUTPUT
   
         - name: Show WebP files
+          if: steps.check_images.outputs.has_images == 'true'
           run: |
             echo "=== WebP files to upload ==="
             echo "${{ steps.get_webp.outputs.webp_files }}"
