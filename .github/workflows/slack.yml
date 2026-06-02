@@ -22,8 +22,8 @@ jobs:
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
           SHA: ${{ github.sha }}
+          SECRET: ${{ secrets.SLACK_BOT_TOKEN }}
         run: |
-          SECRET="xoxb-737253511315-11258253388291-L6INWPFGORen9QiTmxafAdkR"
           PAYLOAD=$(jq -n \
             --arg channel "#automation-workflows" \
             --arg repo "$REPO" \
