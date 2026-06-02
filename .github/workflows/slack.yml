@@ -31,20 +31,16 @@ jobs:
             --arg sha "${SHA:0:7}" \
             --arg msg "$MESSAGE" \
             '{
-              "channel": $channel,
-              "attachments": [
-                {
-                  "color": "danger",
-                  "title": "❌ QA Check Failed — Deploy Blocked",
-                  "fields": [
-                    {"title": "Repository", "value": $repo, "short": true},
-                    {"title": "Branch",     "value": $branch, "short": true},
-                    {"title": "Commit",     "value": $sha, "short": true},
-                    {"title": "Failures",   "value": $msg, "short": false}
-                  ]
-                }
-              ]
+                channel: $channel,
+                text:
+                  ("❌ *QA Check Failed — Deploy Blocked*\n\n" +
+                  "*Repository:* " + $repo + "\n" +
+                  "*Branch:* " + $branch + "\n" +
+                  "*Commit:* " + $sha + "\n\n" +
+                  "*Failures:*\n" + $msg)
             }')
+
+          echo "$PAYLOAD"
 
           RESPONSE=$(curl -s \
             -X POST "https://slack.com/api/chat.postMessage" \
