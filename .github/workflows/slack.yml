@@ -11,7 +11,9 @@ on:
         required: true
         type: string
     secrets:
-      SLACK_WEBHOOK_URL:
+      SLACK_BOT_TOKEN:
+        required: true
+      SLACK_CHANNEL_ID:
         required: true
 
 jobs:
@@ -21,18 +23,21 @@ jobs:
     steps:
       - name: Send Slack notification
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           MESSAGE: ${{ inputs.message }}
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
           SHA: ${{ github.sha }}
         run: |
           PAYLOAD=$(jq -n \
+            --arg channel "$SLACK_CHANNEL_ID" \
             --arg repo "$REPO" \
             --arg branch "$BRANCH" \
             --arg sha "${SHA:0:7}" \
             --arg msg "$MESSAGE" \
             '{
+              "channel": C0B7ACQ4X6K,
               "attachments": [
                 {
                   "color": "danger",
@@ -47,10 +52,11 @@ jobs:
               ]
             }')
 
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "$SLACK_WEBHOOK_URL" \
+          RESPONSE=$(curl -s \
+            -X POST "https://slack.com/api/chat.postMessage" \
+            -H "Authorization: Bearer xoxb-737253511315-9790794206257-uRvh89IRnW1uvtKRkWOefCtH" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD")
 
-          echo "Slack response: $STATUS"
-          [ "$STATUS" = "200" ] || exit 1
+          echo "Slack response: $RESPONSE"
+          echo "$RESPONSE" | jq -e '.ok == true' || exit 1
