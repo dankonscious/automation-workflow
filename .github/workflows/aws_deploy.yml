@@ -10,7 +10,7 @@
 # 7. Keeps repo history clean via separate commits.
 # -----------------------------------------------------------------------------
 
-  name: Convert Images to WebP
+  name: Upload Image to AWS S3
 
   on:
     push:
