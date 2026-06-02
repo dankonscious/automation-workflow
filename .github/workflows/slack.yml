@@ -85,7 +85,8 @@ jobs:
                   "*Branch:* " + $branch + "\n" +
                   "*Commit:* <" + $commit_url + "|" + $sha + ">\n" +
                   "*Committed by:* " + $committer + "\n\n" +
-                  "*Failures:*\n" + $msg)
+                  "*Failures:*\n" + $msg + "\n\n" +
+                  "Fix the issue to receive $100 credit towards your next invoice! 🎉")
             }')
 
           echo "$PAYLOAD"
